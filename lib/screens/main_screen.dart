@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import '../data/app_data.dart';
 import '../models/order.dart';
 import '../models/product.dart';
+import '../widgets/curved_bottom_nav.dart';
 import '../screens/home_screen.dart';
 import '../screens/activity_screen.dart';
 import '../screens/catalog_screen.dart';
-import '../screens/profile_screen.dart';
+import 'profile/profile_screen.dart';
 import '../screens/product_detail_screen.dart';
 import '../screens/cart_screen.dart';
 
@@ -72,8 +73,18 @@ class _MainScreenState extends State<MainScreen> {
 
   String _today() {
     const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     final now = DateTime.now();
     return '${now.day} ${months[now.month - 1]} ${now.year}';
@@ -82,7 +93,6 @@ class _MainScreenState extends State<MainScreen> {
   void checkout() {
     if (cart.isEmpty) return;
 
-    // Setiap barang di keranjang menjadi satu pesanan baru
     for (final entry in cart.entries) {
       final product = AppData.products.firstWhere((p) => p.id == entry.key);
       final qty = entry.value;
@@ -104,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
       selectedIndex = 1; // pindah ke tab Aktivitas
     });
 
-    Navigator.pop(context); // tutup halaman keranjang
+    Navigator.pop(context);
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -132,7 +142,6 @@ class _MainScreenState extends State<MainScreen> {
         cartCount: cartCount,
         onCartTap: openCart,
       ),
-      // Tanpa const supaya daftar pesanan ikut ter-refresh setelah checkout
       ActivityScreen(),
       CatalogScreen(
         onProductTap: openProduct,
@@ -144,52 +153,37 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: selectedIndex,
         children: pages,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: selectedIndex,
-          onTap: changePage,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFFB71C1C),
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 11,
-          unselectedFontSize: 11,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Beranda',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_outlined),
-              activeIcon: Icon(Icons.receipt_long),
-              label: 'Aktivitas',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.storefront_outlined),
-              activeIcon: Icon(Icons.storefront),
-              label: 'Katalog',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profil',
-            ),
-          ],
-        ),
+      bottomNavigationBar: CurvedBottomNav(
+        currentIndex: selectedIndex,
+        onTap: changePage,
+        activeColor: const Color(0xFFB71C1C),
+        items: const [
+          CurvedNavItem(
+            icon: Icons.home_outlined,
+            activeIcon: Icons.home_rounded,
+            label: 'Beranda',
+          ),
+          CurvedNavItem(
+            icon: Icons.receipt_long_outlined,
+            activeIcon: Icons.receipt_long_rounded,
+            label: 'Aktivitas',
+          ),
+          CurvedNavItem(
+            icon: Icons.storefront_outlined,
+            activeIcon: Icons.storefront_rounded,
+            label: 'Katalog',
+          ),
+          CurvedNavItem(
+            icon: Icons.person_outline_rounded,
+            activeIcon: Icons.person_rounded,
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }

@@ -14,12 +14,30 @@ class UserModel {
     required this.email,
     required this.password,
   });
+
+  UserModel copyWith({
+    String? namaLengkap,
+    String? noHp,
+    String? provinsi,
+    String? kota,
+    String? email,
+    String? password,
+  }) {
+    return UserModel(
+      namaLengkap: namaLengkap ?? this.namaLengkap,
+      noHp: noHp ?? this.noHp,
+      provinsi: provinsi ?? this.provinsi,
+      kota: kota ?? this.kota,
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
 }
 
 class AuthSession {
   static UserModel? currentUser;
 
-  // Akun demo bawaan agar bisa langsung dites login
+  // Akun demo sementara untuk login langsung
   static final List<UserModel> _registeredUsers = [
     const UserModel(
       namaLengkap: 'User PitStop',
@@ -65,6 +83,31 @@ class AuthSession {
       email: 'google.user@gmail.com',
       password: '',
     );
+  }
+
+  static void updateProfile({
+    required String namaLengkap,
+    required String noHp,
+    required String provinsi,
+    required String kota,
+    required String email,
+  }) {
+    if (currentUser == null) return;
+    final updated = currentUser!.copyWith(
+      namaLengkap: namaLengkap,
+      noHp: noHp,
+      provinsi: provinsi,
+      kota: kota,
+      email: email,
+    );
+
+    final index = _registeredUsers.indexWhere(
+      (u) => u.email == currentUser!.email,
+    );
+    if (index != -1) {
+      _registeredUsers[index] = updated;
+    }
+    currentUser = updated;
   }
 
   static void logout() {

@@ -26,6 +26,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  void _goToMainScreen() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => MainScreen(key: UniqueKey())),
+      (route) => false,
+    );
+  }
+
   void _handleLogin() {
     if (!_isFormFilled) return;
 
@@ -35,10 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MainScreen()),
-      );
+      _goToMainScreen();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -53,10 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleGoogleLogin() {
     AuthSession.loginWithGoogle();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const MainScreen()),
-    );
+    _goToMainScreen();
   }
 
   void _showForgotPasswordDialog() {
@@ -282,7 +284,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 26),
 
-                  // LINK KE DAFTAR
+                  // LINK KE DAFTAR (FIXED -> RegisterScreen)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

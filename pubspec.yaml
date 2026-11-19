@@ -1,22 +1,32 @@
 name: pitstop
-description: Aplikasi PitStop Bengkel dan Sparepart Motor
+description: "Aplikasi PitStop"
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.5.0
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/products/aki/
+    - assets/images/products/ban/
+    - assets/images/products/busi/
+    - assets/images/products/filter/
+    - assets/images/products/lampu/
+    - assets/images/products/oli/
+    - assets/images/products/rantai/
+    - assets/images/products/rem/
+    

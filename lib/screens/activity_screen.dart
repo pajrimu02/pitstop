@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/product_image.dart';
 import '../data/app_data.dart';
 
 class ActivityScreen extends StatefulWidget {
@@ -145,14 +146,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    order.image,
-                                    width: 75,
-                                    height: 75,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) =>
-                                        const Icon(Icons.settings, size: 50),
-                                  ),
+                                  child: ProductImage(path: order.image, width: 75, height: 75, fit: BoxFit.cover),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/product_image.dart';
 import '../models/product.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -46,15 +47,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               height: 300,
               width: double.infinity,
               color: Colors.white,
-              child: Image.network(
-                product.image,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Icons.settings,
-                  size: 100,
-                  color: Color(0xFFB71C1C),
-                ),
-              ),
+              child: ProductImage(path: product.image, width: double.infinity, height: 300, fit: BoxFit.contain),
             ),
 
             Container(

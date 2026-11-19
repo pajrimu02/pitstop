@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'product_image.dart';
 import '../models/product.dart';
 
 class ProductCard extends StatelessWidget {
@@ -42,18 +43,7 @@ class ProductCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(15),
                 ),
-                child: Image.network(
-                  product.image,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Center(
-                    child: Icon(
-                      Icons.settings,
-                      color: Color(0xFFB71C1C),
-                      size: 55,
-                    ),
-                  ),
-                ),
+                child: ProductImage(path: product.image, width: double.infinity, fit: BoxFit.cover),
               ),
             ),
             Padding(

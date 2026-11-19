@@ -3,15 +3,20 @@ import '../data/app_data.dart';
 import '../models/product.dart';
 import '../widgets/product_card.dart';
 import '../widgets/section_title.dart';
+import '../widgets/cart_button.dart';
 
 class HomeScreen extends StatelessWidget {
   final Function(Product) onProductTap;
   final VoidCallback onCatalogTap;
+  final int cartCount;
+  final VoidCallback onCartTap;
 
   const HomeScreen({
     super.key,
     required this.onProductTap,
     required this.onCatalogTap,
+    required this.cartCount,
+    required this.onCartTap,
   });
 
   @override
@@ -54,6 +59,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {},
                     icon: const Icon(Icons.notifications_none),
                   ),
+                  CartButton(count: cartCount, onTap: onCartTap),
                 ],
               ),
 

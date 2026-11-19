@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../data/app_data.dart';
+import '../models/order.dart';
 import '../models/product.dart';
 import '../screens/home_screen.dart';
 import '../screens/activity_screen.dart';
 import '../screens/catalog_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/product_detail_screen.dart';
+import '../screens/cart_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,6 +20,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
 
+  /// productId -> jumlah
   final Map<int, int> cart = {};
 
   void openProduct(Product product) {
@@ -31,10 +35,82 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  void openCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartScreen(
+          cart: cart,
+          onChangeQty: changeQty,
+          onRemove: removeFromCart,
+          onCheckout: checkout,
+        ),
+      ),
+    );
+  }
+
   void addToCart(Product product, int quantity) {
     setState(() {
       cart[product.id] = (cart[product.id] ?? 0) + quantity;
     });
+  }
+
+  void changeQty(int productId, int delta) {
+    setState(() {
+      final newQty = (cart[productId] ?? 0) + delta;
+      if (newQty <= 0) {
+        cart.remove(productId);
+      } else {
+        cart[productId] = newQty;
+      }
+    });
+  }
+
+  void removeFromCart(int productId) {
+    setState(() => cart.remove(productId));
+  }
+
+  String _today() {
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    ];
+    final now = DateTime.now();
+    return '${now.day} ${months[now.month - 1]} ${now.year}';
+  }
+
+  void checkout() {
+    if (cart.isEmpty) return;
+
+    // Setiap barang di keranjang menjadi satu pesanan baru
+    for (final entry in cart.entries) {
+      final product = AppData.products.firstWhere((p) => p.id == entry.key);
+      final qty = entry.value;
+
+      AppData.orders.insert(
+        0,
+        Order(
+          name: qty > 1 ? '${product.name} (x$qty)' : product.name,
+          date: _today(),
+          price: product.price * qty,
+          status: 'Masih di PO',
+          image: product.image,
+        ),
+      );
+    }
+
+    setState(() {
+      cart.clear();
+      selectedIndex = 1; // pindah ke tab Aktivitas
+    });
+
+    Navigator.pop(context); // tutup halaman keranjang
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Pesanan berhasil dibuat!')),
+      );
   }
 
   int get cartCount {
@@ -53,9 +129,17 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(
         onProductTap: openProduct,
         onCatalogTap: () => changePage(2),
+        cartCount: cartCount,
+        onCartTap: openCart,
       ),
-      const ActivityScreen(),
-      CatalogScreen(onProductTap: openProduct),
+      // Tanpa const supaya daftar pesanan ikut ter-refresh setelah checkout
+      ActivityScreen(),
+      CatalogScreen(
+        onProductTap: openProduct,
+        onAddToCart: addToCart,
+        cartCount: cartCount,
+        onCartTap: openCart,
+      ),
       const ProfileScreen(),
     ];
 
@@ -83,47 +167,23 @@ class _MainScreenState extends State<MainScreen> {
           unselectedItemColor: Colors.grey,
           selectedFontSize: 11,
           unselectedFontSize: 11,
-          items: [
-            const BottomNavigationBarItem(
+          items: const [
+            BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Icon(Icons.home),
               label: 'Beranda',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.receipt_long_outlined),
               activeIcon: Icon(Icons.receipt_long),
               label: 'Aktivitas',
             ),
             BottomNavigationBarItem(
-              icon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  const Icon(Icons.shopping_bag_outlined),
-                  if (cartCount > 0)
-                    Positioned(
-                      right: -9,
-                      top: -7,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '$cartCount',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              activeIcon: const Icon(Icons.shopping_bag),
+              icon: Icon(Icons.storefront_outlined),
+              activeIcon: Icon(Icons.storefront),
               label: 'Katalog',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               activeIcon: Icon(Icons.person),
               label: 'Profil',
